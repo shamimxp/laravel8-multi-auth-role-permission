@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\Admin\Auth\AuthenticatedSessionController;
-use App\Http\Controllers\Admin\HomeController;
+
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -25,18 +25,16 @@ Route::get('/dashboard', function () {
 
 require __DIR__.'/auth.php';
 
-// Admin Route
-Route::namespace('Admin')->prefix('admin')->name('admin.')->group(function (){
-    Route::namespace('Auth')->middleware('guest:admin')->group(function (){
-        //login route
-        Route::get('/login',[AuthenticatedSessionController::class,'create'])->name('login');
-        Route::post('/login',[AuthenticatedSessionController::class,'store'])->name('adminLogin');
-    });
-    Route::middleware('admin')->group(function (){
-        Route::get('/dashboard',[HomeController::class,'index'])->name('dashboard');
-    });
-    Route::post('/logout',[AuthenticatedSessionController::class,'destroy'])->name('logout');
+require('admin.php');
+require('seller.php');
 
+
+Route::get('clear-cache', function () {
+    Artisan::call('config:clear');
+    Artisan::call('cache:clear');
+    Artisan::call('config:cache');
+    return redirect('/');
 });
+
 
 

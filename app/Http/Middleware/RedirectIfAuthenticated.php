@@ -17,19 +17,27 @@ class RedirectIfAuthenticated
      * @param  string|null  ...$guards
      * @return mixed
      */
-    public function handle(Request $request, Closure $next, ...$guards)
+    public function handle(Request $request, Closure $next, $guard)
     {
-        $guards = empty($guards) ? [null] : $guards;
-
-        foreach ($guards as $guard) {
-            if (Auth::guard($guard)->check()) {
-                if ($guard == 'admin'){
-                    return redirect(RouteServiceProvider::ADMIN_HOME);
-                }
-                return redirect(RouteServiceProvider::HOME);
-            }
+//        $guards = empty($guards) ? [null] : $guards;
+//
+//        foreach ($guards as $guard) {
+//            if (Auth::guard($guard)->check()) {
+//                if ($guard == 'admin'){
+//                    return redirect(RouteServiceProvider::ADMIN_HOME);
+//                }
+//                return redirect(RouteServiceProvider::HOME);
+//            }
+//        }
+        if ($guard == "admin" && Auth::guard($guard)->check()) {
+            return redirect(RouteServiceProvider::ADMIN_HOME);
         }
-
+        if ($guard == "seller" && Auth::guard($guard)->check()) {
+            return redirect(RouteServiceProvider::SELLER_HOME);
+        }
+        if (Auth::guard($guard)->check()) {
+            return redirect(RouteServiceProvider::HOME);
+        }
         return $next($request);
     }
 }
